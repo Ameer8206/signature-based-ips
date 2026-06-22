@@ -1,40 +1,45 @@
-from scapy.all import sniff, IP
+from scapy.all import sniff, IP, TCP
 from collections import defaultdict
 import time
 
 INTERFACE = "enp0s3"
-ATTACKER_IP = "192.168.56.3"
-VICTIM_IP = "192.168.56.2"
+TIME_WINDOW = 10
+PORT_THRESHOLD = 10
 
-DOS_THRESHOLD = 50
-TIME_WINDOW = 5
-
-packet_count = defaultdict(list)
+scan_tracker = defaultdict(list)
 
 def packet_callback(packet):
-    if packet.haslayer(IP):
+
+    if packet.haslayer(IP) and packet.haslayer(TCP):
+
         src_ip = packet[IP].src
-        dst_ip = packet[IP].dst
+        dst_port = packet[TCP].dport
         current_time = time.time()
 
-        packet_count[src_ip].append(current_time)
+        scan_tracker[src_ip].append((dst_port, current_time))
 
-        packet_count[src_ip] = [
-            t for t in packet_count[src_ip]
+        scan_tracker[src_ip] = [
+            (port, t)
+            for port, t in scan_tracker[src_ip]
             if current_time - t <= TIME_WINDOW
         ]
 
-        count = len(packet_count[src_ip])
+        unique_ports = {
+            port for port, t in scan_tracker[src_ip]
+        }
 
-        print(f"Packet from {src_ip} to {dst_ip} | Count: {count}")
+        print(
+            f"{src_ip} -> Port {dst_port} "
+            f"(Unique Ports: {len(unique_ports)})"
+        )
 
-        if src_ip == ATTACKER_IP and dst_ip == VICTIM_IP and count > DOS_THRESHOLD:
+        if src_ip == "192.168.56.3" and len(unique_ports) > PORT_THRESHOLD:
+
             print("\n" + "=" * 50)
-            print("[ALERT] DOS ATTACK DETECTED")
-            print(f"ATTACKER IP: {src_ip}")
-            print(f"TARGET IP: {dst_ip}")
-            print(f"PACKETS IN {TIME_WINDOW} SECONDS: {count}")
+            print("[ALERT] PORT SCAN DETECTED")
+            print(f"ATTACKER: {src_ip}")
+            print(f"PORTS SCANNED: {len(unique_ports)}")
             print("=" * 50 + "\n")
 
-print("IPS DoS Detector Started...")
+print("IPS Port Scan Detector Started...")
 sniff(iface=INTERFACE, prn=packet_callback, store=False)
