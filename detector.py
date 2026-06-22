@@ -1,6 +1,7 @@
 from scapy.all import sniff, IP, TCP
 from collections import defaultdict
 import time
+from blocker import block_ip
 
 INTERFACE = "enp0s3"
 
@@ -31,6 +32,7 @@ def detect_dos(src_ip, dst_ip):
     if src_ip == ATTACKER_IP and dst_ip == VICTIM_IP and count > DOS_THRESHOLD:
         print("\n" + "=" * 50)
         print("[ALERT] DOS ATTACK DETECTED")
+        block_ip(src_ip)
         print(f"ATTACKER IP: {src_ip}")
         print(f"TARGET IP: {dst_ip}")
         print(f"PACKETS IN {DOS_TIME_WINDOW} SECONDS: {count}")
@@ -53,6 +55,7 @@ def detect_port_scan(packet, src_ip):
     if src_ip == ATTACKER_IP and len(unique_ports) > PORT_SCAN_THRESHOLD:
         print("\n" + "=" * 50)
         print("[ALERT] PORT SCAN DETECTED")
+        block_ip(src_ip)
         print(f"ATTACKER IP: {src_ip}")
         print(f"PORTS SCANNED: {len(unique_ports)}")
         print("=" * 50 + "\n")
