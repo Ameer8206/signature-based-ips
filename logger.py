@@ -5,6 +5,8 @@ LOG_DIR = "logs"
 LOG_FILE = os.path.join(LOG_DIR, "alerts.log")
 
 def log_alert(attack_type, attacker_ip, target_ip="N/A"):
+     """Appends a timestamped alert entry to the persistent log file,
+    recording the attack type, attacker IP, and target IP."""
     os.makedirs(LOG_DIR, exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
