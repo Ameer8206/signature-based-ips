@@ -20,6 +20,8 @@ scan_tracker = defaultdict(list)
 
 
 def detect_dos(packet, src_ip, dst_ip):
+    """Detects DoS flooding by tracking SYN packet rate from the attacker to the victim
+    within a rolling time window, and triggers a block if the threshold is exceeded."""
     if not packet.haslayer(TCP):
         return
     if src_ip != ATTACKER_IP or dst_ip != VICTIM_IP or packet[TCP].flags != "S":
@@ -47,6 +49,8 @@ def detect_dos(packet, src_ip, dst_ip):
 
 
 def detect_port_scan(packet, src_ip):
+    """Detects port scanning by tracking the number of unique destination ports
+    contacted by a source IP within a rolling time window."""
     if not packet.haslayer(TCP):
         return
 
@@ -72,6 +76,8 @@ def detect_port_scan(packet, src_ip):
 
 
 def packet_callback(packet):
+      """Callback invoked for every sniffed packet; extracts IP info and runs
+    both DoS and port scan detection checks."""
     if packet.haslayer(IP):
         src_ip = packet[IP].src
         dst_ip = packet[IP].dst
