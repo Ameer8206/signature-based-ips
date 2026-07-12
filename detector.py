@@ -77,7 +77,7 @@ def detect_port_scan(packet, src_ip):
 
 def packet_callback(packet):
       """Callback invoked for every sniffed packet; extracts IP info and runs
-    both DoS and port scan detection checks."""
+      both DoS and port scan detection checks."""
     if packet.haslayer(IP):
         src_ip = packet[IP].src
         dst_ip = packet[IP].dst
