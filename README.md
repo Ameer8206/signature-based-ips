@@ -18,7 +18,7 @@ Kali Attacker: 192.168.56.3
   # Setup
 
 1. Clone the repository:
-   git clone https://github.com/Ameer8206/[your-repo-name].git
+   git clone https://github.com/Ameer8206/signature-based-ips.git
 
 2. Install dependencies:
    pip3 install scapy
