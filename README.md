@@ -15,3 +15,18 @@ Kali Attacker: 192.168.56.3
 - VirtualBox
 - Ubuntu
 - Kali Linux
+  # Setup
+
+1. Clone the repository:
+   git clone https://github.com/Ameer8206/[your-repo-name].git
+
+2. Install dependencies:
+   pip3 install scapy
+
+3. Run the IPS engine:
+   python3 gui.py
+
+## Requirements
+- Python 3.x
+- Ubuntu 22.04 LTS
+- Scapy
