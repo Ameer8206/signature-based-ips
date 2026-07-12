@@ -3,6 +3,8 @@ import subprocess
 blocked_ips = set()
 
 def block_ip(ip_address):
+    """Blocks a given IP address by inserting an iptables DROP rule,
+    and tracks already-blocked IPs to avoid duplicate rules.""" 
     if ip_address in blocked_ips:
         print(f"[INFO] {ip_address} is already blocked.")
         return
